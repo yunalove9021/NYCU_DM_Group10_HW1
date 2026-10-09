@@ -1,0 +1,21 @@
+{
+        "MSZoning": {
+            "C (all)": "C"
+        },
+        "BldgType": {
+            "Duplex": "Duplx",
+            "2fmCon": "2FmCon",
+            "Twnhs": null
+        },
+        "MasVnrType": {
+            "Brk Cmn": "BrkCmn"
+        },
+        "Exterior2nd": {
+            "Brk Cmn": "BrkComm",
+            "CmentBd": "CemntBd",
+            "Wd Shng": "WdShing"
+        },
+        "Neighborhood": {
+            "NAmes": "Names"
+        }
+    }
