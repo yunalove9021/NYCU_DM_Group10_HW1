@@ -28,6 +28,18 @@ TIME_FEATURE_TYPES = {
     "cos_MoSold": "cyclic"
 }
 
+def time_split(df, ratio=0.8):
+    df = df.copy()
+    df["Date"] = pd.to_datetime(
+        dict(year=df["YrSold"], month=df["MoSold"], day=1)
+    )
+    df = df.sort_values("Date").reset_index(drop=True)
+    df = df.drop(columns=["Date"])
+    split_idx = int(len(df) * ratio)
+    train_df = df.iloc[:split_idx].copy()
+    test_df = df.iloc[split_idx:].copy()
+    return train_df, test_df
+
 ##ord cal轉數字 1開始 0為原始空值
 def ord_cal_mapping(df, json_list):
     df = df.copy()
@@ -61,6 +73,7 @@ def time_to_features(df, keep_yrsold=True, max_valid_year=2010):
     yr_sold = df["YrSold"]
     garage_yr = df["GarageYrBlt"]
     has_garage = garage_yr.notna()
+    df["GarageYrBlt"] = df["GarageYrBlt"].fillna(0)#時間空值處理
     # GarageYrBlt 超過合理年份(如 test 的 2207)視為錯誤，改用 YearBuilt
     garage_yr = garage_yr.where(~(garage_yr > max_valid_year), df["YearBuilt"])
     df["HouseAge"] = (yr_sold - df["YearBuilt"]).clip(lower=0)
@@ -190,6 +203,8 @@ def one_hot_cols(df, json_list):
             {f"{col}_{idx_to_name[i]}": (codes == i).astype("int8") for i in sorted(idx_to_name)},
             index=df.index))
     df_oh = pd.concat([df.drop(columns=cat_cols)] + parts, axis=1)
+    df_class.reset_index(inplace = True, drop = True)
+    df_oh.reset_index(inplace = True, drop = True)
     return df_class, df_oh
 
 ##數值分佈確認
@@ -506,21 +521,13 @@ def test_process(test_data):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--process_type",
-        type=str,
-        choices=["train", "test"],
-        help="處理類型：train/test"
-    )
-    parser.add_argument(
         "--data_path",
         type=str,
         help="檔案位置（CSV only）"
     )
     args = parser.parse_args()
-    process_type = args.process_type
     data_path = args.data_path
     df = pd.read_csv(data_path)
-    if process_type == 'train':
-        train_process(train_data=df)
-    elif process_type == 'test':
-        test_process(test_data=df)
+    train, test = time_split(df)
+    train_process(train_data = train)
+    test_process(test_data = test)
