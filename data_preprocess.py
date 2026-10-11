@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from openpyxl import load_workbook
 from openpyxl.formatting.rule import ColorScaleRule
 import argparse
+from scipy.stats import skew
 
 ##Load Mapping File
 with open("./mapping/categories_mapping.json", "r", encoding="utf-8") as f:
@@ -50,7 +51,7 @@ def update_column_types(column_types, keep_yrsold=True):
 #時間特徵：年份轉屋齡、月份轉 sin/cos (取代 time_to_unix)
 column_types = update_column_types(column_types)
 
-# 移除舊的 time 型欄位 (YearBuilt/YearRemodAdd/GarageYrBlt/SoldTime)，加入新特徵
+# 轉化 time 型欄位 (YearBuilt/YearRemodAdd/GarageYrBlt/SoldTime)，加入新特徵
 def time_to_features(df, keep_yrsold=True, max_valid_year=2010):
     required = ["YearBuilt", "YearRemodAdd", "GarageYrBlt", "YrSold", "MoSold"]
     missing = [c for c in required if c not in df.columns]
@@ -70,10 +71,10 @@ def time_to_features(df, keep_yrsold=True, max_valid_year=2010):
     angle = 2 * np.pi * df["MoSold"] / 12
     df["sin_MoSold"] = np.sin(angle)
     df["cos_MoSold"] = np.cos(angle)
-    drop_cols = ["YearBuilt", "YearRemodAdd", "GarageYrBlt", "MoSold"]
-    if not keep_yrsold:
-        drop_cols.append("YrSold")
-    return df.drop(columns=drop_cols)
+    # drop_cols = ["YearBuilt", "YearRemodAdd", "GarageYrBlt", "MoSold"]
+    # if not keep_yrsold:
+    #     drop_cols.append("YrSold")
+    return df
 
 ##問題值處理，對應回原始標籤 參考clean_value.json
 def clean_category_values(df, clean_value, id_col="Id"):
@@ -115,35 +116,51 @@ def add_custom_features(df, is_train=False):
                        df.get('BsmtFullBath', 0) + 0.5 * df.get('BsmtHalfBath', 0)
     df['TotalPorchArea'] = df.get('WoodDeckSF', 0) + df.get('OpenPorchSF', 0) + \
                            df.get('EnclosedPorch', 0) + df.get('3SsnPorch', 0) + df.get('ScreenPorch', 0)
+    # 加上極小值防呆，避免 TotRmsAbvGrd 或 LotArea 為 0 導致分母為零 (ZeroDivisionError)
+    df['AvgRoomSize'] = df['GrLivArea'] / df.get('TotRmsAbvGrd', 1).replace(0, 1)
+    df['LotUtilization'] = df['GrLivArea'] / df.get('LotArea', 1).replace(0, 1)
     
     # 2. 交互作用項 (Interactions)
     df['Qual_x_Area'] = df.get('OverallQual', 0) * df.get('GrLivArea', 0)
+    df['TotalQualCond'] = df.get('OverallQual', 0) + df.get('OverallCond', 0)
     
     # 3. 二元指標特徵 (Binary Indicators)
     df['HasBasement'] = (df.get('TotalBsmtSF', 0) > 0).astype('int8')
     df['HasFireplace'] = (df.get('Fireplaces', 0) > 0).astype('int8')
     df['HasPool'] = (df.get('PoolArea', 0) > 0).astype('int8')
     
-    # 4. 偏態特徵的數學轉換 (Transforms)
-    if 'LotArea' in df.columns:
-        df['LotArea'] = np.log1p(df['LotArea'])
-    if 'GrLivArea' in df.columns:
-        df['GrLivArea'] = np.log1p(df['GrLivArea'])
-        
-    if is_train and 'SalePrice' in df.columns:
-        df['SalePrice'] = np.log1p(df['SalePrice'])
-        
-    # 更新全域的 column_types，供後續 standardize_numeric 識別
+    # 在進行自動偏態校正前，必須先更新 column_types，讓新加總的特徵也能被納入偏態檢查
     column_types.update({
         "TotalArea": "numeric",
         "TotalBaths": "numeric",
         "TotalPorchArea": "numeric",
+        "AvgRoomSize": "numeric",
+        "LotUtilization": "numeric",
         "Qual_x_Area": "numeric",
+        "TotalQualCond": "numeric",
         "HasBasement": "binary",
         "HasFireplace": "binary",
         "HasPool": "binary"
     })
     
+    # 4. 自動化高偏態特徵校正 (Automated Skewness Fix)
+    # 篩選出所有數值型特徵 (排除目標變數 SalePrice，它會在後面獨立處理)
+    numeric_feats = [col for col in df.columns if column_types.get(col) == 'numeric' and col != 'SalePrice']
+    
+    # 計算偏態係數 (Skewness)
+    skewed_feats = df[numeric_feats].apply(lambda x: skew(x.dropna())).sort_values(ascending=False)
+    
+    # 找出高度右偏 (偏態係數 > 0.75) 的特徵
+    high_skew = skewed_feats[skewed_feats > 0.75].index
+    
+    # 對高偏態特徵統一進行 log1p 轉換
+    for feat in high_skew:
+        df[feat] = np.log1p(df[feat])
+        
+    # 目標變數 SalePrice 獨立轉換 (僅限訓練集)
+    if is_train and 'SalePrice' in df.columns:
+        df['SalePrice'] = np.log1p(df['SalePrice'])
+        
     return df
 
 ##categories 資料做one hot轉換，另輸出數字標籤版
