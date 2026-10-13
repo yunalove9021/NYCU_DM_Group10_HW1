@@ -1,5 +1,5 @@
 ## 📋 資料處理與特徵工程說明 (俊宏、煜為)
-> **最後更新日期：** `2026/10/11`
+> **最後更新日期：** `2026/10/13`
 
 本專案主要針對房價預測（Ames Housing Dataset 結構）進行資料清洗與特徵優化，以下為完整的資料處理流水線（Pipeline）。
 
@@ -51,6 +51,7 @@
 
 #### 📈 偏態特徵數學轉換 (Log Transform)
 *   **特徵自動化高偏態校正**：利用 `scipy.stats.skew` 掃描所有數值特徵，針對偏態係數 **\(> 0.75\)** 的高度右偏特徵，自動進行 `np.log1p` 轉換以校正分佈。
+    *   ⚠️ **Data Leakage 防範**：Train set 篩選出的高偏態特徵名單會統一儲存至 `mapping/skewed_features.json`，Test set 在進行轉換時會直接讀取該名單，確保測試集依循相同的特徵轉換規則。
 *   ⚠️ **重要注意（目標變數）**：訓練集 (Train set) 會針對目標變數 `SalePrice` 進行對數轉換（Log Transform）。**模型預測完畢後，務必使用 `np.expm1` 轉回真實房價。**
 
 ---
@@ -76,7 +77,7 @@
 ```text
 ├── corr/             # 相關係數資料夾（基於 Train data 標準化後的 numeric, ordinal, time, target 計算之皮爾森相關係數，僅呈現正負 0.3 以上之關係）
 ├── log/              # 特徵欄位異常修正相關紀錄
-├── mapping/          # 資料欄位與原始標籤對應參考（含 column_types.json、categories_mapping.json 等）
+├── mapping/          # 資料欄位與原始標籤對應參考（含 column_types.json、categories_mapping.json、skewed_features.json 等）
 ├── summary/          # 數值資料分佈結果參考（標準化前後分別為獨立檔案）
 ├── models/           # 簡單線性回歸結果，包含貪婪特徵選擇列表。
 └── process_dataset/  # 處理後的資料產出位置（區分類別資料 one_hot 表達與 index 表達，其餘欄位內容相同）

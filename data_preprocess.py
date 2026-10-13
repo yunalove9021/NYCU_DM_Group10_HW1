@@ -157,18 +157,34 @@ def add_custom_features(df, is_train=False):
     })
     
     # 4. 自動化高偏態特徵校正 (Automated Skewness Fix)
-    # 篩選出所有數值型特徵 (排除目標變數 SalePrice，它會在後面獨立處理)
-    numeric_feats = [col for col in df.columns if column_types.get(col) == 'numeric' and col != 'SalePrice']
-    
-    # 計算偏態係數 (Skewness)
-    skewed_feats = df[numeric_feats].apply(lambda x: skew(x.dropna())).sort_values(ascending=False)
-    
-    # 找出高度右偏 (偏態係數 > 0.75) 的特徵
-    high_skew = skewed_feats[skewed_feats > 0.75].index
+    if is_train:
+        # 篩選出所有數值型特徵 (排除目標變數 SalePrice，它會在後面獨立處理)
+        numeric_feats = [col for col in df.columns if column_types.get(col) == 'numeric' and col != 'SalePrice']
+        
+        # 計算偏態係數 (Skewness)
+        skewed_feats = df[numeric_feats].apply(lambda x: skew(x.dropna())).sort_values(ascending=False)
+        
+        # 找出高度右偏 (偏態係數 > 0.75) 的特徵
+        high_skew = skewed_feats[skewed_feats > 0.75].index.tolist()
+        
+        # 記錄高偏態特徵供 test set 使用
+        import os
+        os.makedirs("./mapping", exist_ok=True)
+        with open("./mapping/skewed_features.json", "w", encoding="utf-8") as f:
+            json.dump(high_skew, f, ensure_ascii=False, indent=4)
+    else:
+        # Test set 直接讀取 Train set 記錄的高偏態特徵
+        try:
+            with open("./mapping/skewed_features.json", "r", encoding="utf-8") as f:
+                high_skew = json.load(f)
+        except FileNotFoundError:
+            print("警告: 找不到 skewed_features.json，請確認是否已先執行 Train 階段")
+            high_skew = []
     
     # 對高偏態特徵統一進行 log1p 轉換
     for feat in high_skew:
-        df[feat] = np.log1p(df[feat])
+        if feat in df.columns:
+            df[feat] = np.log1p(df[feat])
         
     # 目標變數 SalePrice 獨立轉換 (僅限訓練集)
     if is_train and 'SalePrice' in df.columns:
