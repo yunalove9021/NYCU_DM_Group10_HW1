@@ -1,0 +1,19 @@
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{lll}
+\toprule
+Hypothesis & Evidence & Verdict \\
+\midrule
+H1 size & TotalArea: $\beta$ = +0.041 [+0.026, +0.051], p < 0.001; GrLivArea: $\beta$ = +0.033 [+0.026, +0.040], p < 0.001 & supported \\
+H2 quality & OverallQual: $\beta$ = +0.022 [+0.012, +0.032], p < 0.001; TotalQualCond: $\beta$ = +0.054 [+0.043, +0.060], p < 0.001 & supported \\
+H3 age & HouseAge: $\beta$ = -0.012 [-0.019, -0.005], p = 0.002 (size and quality held fixed) & supported \\
+H4 location & 4 neighbourhood dummies significant; zoning: MSZoning\_C -29\%, MSZoning\_RM -3\% & supported \\
+H5 luxury premium & Qual\_x\_Area: $\beta$ = +0.025 [+0.019, +0.033], p < 0.001 & supported \\
+H6 engineered features & Set B vs A: test MAE +206 \$ [-67, +480] (§7.2) & direction supported, not significant \\
+H7 penalised > OLS & CV RMSE OLS 0.1519 vs. best penalised 0.1334 (S1) & supported \\
+\bottomrule
+\end{tabular}
+\caption{The hypotheses of §4 revisited with the final model's coefficients and the ablation.}
+\label{tab:hypothesis_check}
+\end{table}

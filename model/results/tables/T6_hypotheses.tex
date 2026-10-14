@@ -1,0 +1,19 @@
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{llll}
+\toprule
+ID & Hypothesis & Evidence (training set) & Tested in \\
+\midrule
+H1 & Size: larger houses cost more; log price is roughly linear in log size & r(TotalArea) = +0.81, r(GrLivArea) = +0.75; linear trend in E3 & §8.1 ($\beta$ > 0) \\
+H2 & Quality: overall quality is among the strongest drivers of price & r(OverallQual) = +0.82, the strongest original feature (E2) & §8.1 ($\beta$ > 0) \\
+H3 & Age: older houses are cheaper even at the same size and quality & r(HouseAge) = -0.57, but age correlates with quality (E4) & §8.1 ($\beta$ < 0) \\
+H4 & Location: neighbourhood and zoning shift the price level & median price ranges \$94k–\$318k across neighbourhoods (E6) & §8.1 (dummies, GVIF) \\
+H5 & Luxury premium: quality matters more in bigger houses (quality $\times$ size) & r(Qual\_x\_Area) = +0.85, the highest of all features (E2) & §8.1 ($\beta$ > 0) \\
+H6 & Engineered features add predictive value beyond the raw columns & 4 of the 10 strongest features are engineered (E2) & §7.2 (Set B vs A) \\
+H7 & Collinear blocks make a penalised model better than plain OLS & area, quality, garage and age features form correlated blocks (E4) & §5.2 / §7.1 (CV, OLS vs penalised) \\
+\bottomrule
+\end{tabular}
+\caption{Hypotheses derived from the exploratory analysis and where they are tested.}
+\label{tab:hypotheses}
+\end{table}

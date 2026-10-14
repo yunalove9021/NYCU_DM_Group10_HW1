@@ -1,0 +1,17 @@
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{lrl}
+\toprule
+Feature group & Count & Examples \\
+\midrule
+Original (non-dummy) & 48 & GrLivArea, OverallQual, YearBuilt \\
+One-hot dummies & 225 & Neighborhood\_…, SaleCondition\_… \\
+Engineered & 17 & TotalArea, HouseAge, Qual\_x\_Area \\
+Greedy list (models/) & 96 & 91 original + 5 engineered \\
+Total & 290 &  \\
+\bottomrule
+\end{tabular}
+\caption{Feature groups after pre-processing.}
+\label{tab:features}
+\end{table}

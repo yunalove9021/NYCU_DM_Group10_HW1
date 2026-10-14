@@ -1,0 +1,17 @@
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{lrlrrrrrll}
+\toprule
+\# & Id & Sale & Actual (\$k) & Pred. (\$k) & Comps (\$k) & Error (\$k) & z & Comparable-sales verdict & Rule-based cause \\
+\midrule
+\#1 & 463 & Normal & 62.4 & 113.5 & 129.2 & -51.2 & -4.87 & missing information & price outside train range \\
+\#2 & 89 & Abnorml & 85.0 & 53.3 & 84.5 & +31.7 & +3.80 & model error & abnormal sale, poor condition, commercial zone \\
+\#3 & 496 & Abnorml & 34.9 & 53.2 & 103.2 & -18.3 & -3.44 & atypical house & price outside train range, abnormal sale, commercial zone \\
+\#4 & 875 & Abnorml & 66.5 & 97.9 & 109.5 & -31.4 & -3.15 & missing information & abnormal sale \\
+\#5 & 715 & Normal & 130.5 & 186.9 & 133.8 & -56.4 & -2.92 & model error & none found \\
+\bottomrule
+\end{tabular}
+\caption{The 5 largest test errors ($|$residual$|$ > 2 SD, ranked by $|$z$|$). Comps = median sale price of the 10 most similar training houses; error = actual $-$ predicted.}
+\label{tab:error_cases}
+\end{table}

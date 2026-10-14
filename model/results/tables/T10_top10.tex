@@ -1,0 +1,22 @@
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{lllrllrr}
+\toprule
+Rank & Model & Hyperparameters & r threshold & Dummies & Drop outliers & CV RMSE $\pm$ SD & CV MAE (\$k) \\
+\midrule
+1 & ElasticNet & alpha=0.0774, l1\_ratio=0.05 & 0.3 & all & no & \textbf{0.133370 $\pm$ 0.0294} & \textbf{16.3} \\
+2 & ElasticNet & alpha=0.0705, l1\_ratio=0.05 & 0.3 & all & no & 0.133382 $\pm$ 0.0292 & 16.3 \\
+3 & ElasticNet & alpha=0.085, l1\_ratio=0.05 & 0.3 & all & no & 0.133437 $\pm$ 0.0295 & 16.3 \\
+4 & ElasticNet & alpha=0.0643, l1\_ratio=0.05 & 0.3 & all & no & 0.133487 $\pm$ 0.0291 & 16.3 \\
+5 & ElasticNet & alpha=0.0387, l1\_ratio=0.1 & 0.3 & all & no & 0.133565 $\pm$ 0.0296 & 16.3 \\
+6 & ElasticNet & alpha=0.0932, l1\_ratio=0.05 & 0.3 & all & no & 0.133597 $\pm$ 0.0295 & 16.4 \\
+7 & ElasticNet & alpha=0.0425, l1\_ratio=0.1 & 0.3 & all & no & 0.133599 $\pm$ 0.0297 & 16.3 \\
+8 & ElasticNet & alpha=0.0353, l1\_ratio=0.1 & 0.3 & all & no & 0.133610 $\pm$ 0.0295 & 16.3 \\
+9 & ElasticNet & alpha=0.0586, l1\_ratio=0.05 & 0.3 & all & no & 0.133674 $\pm$ 0.0290 & 16.3 \\
+10 & ElasticNet & alpha=0.267, l1\_ratio=0.01 & 0.3 & all & no & 0.133704 $\pm$ 0.0270 & 16.3 \\
+\bottomrule
+\end{tabular}
+\caption{Top 10 of all tuned configurations, ranked by time-series CV RMSE.}
+\label{tab:top10}
+\end{table}

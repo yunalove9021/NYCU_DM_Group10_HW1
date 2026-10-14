@@ -1,0 +1,18 @@
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{llrrrr}
+\toprule
+Set & Feature set & Features & CV MAE (\$k) $\pm$ SD & Test MAE (\$k) & Test RMSE \\
+\midrule
+A & All original & 273 & 16.8 $\pm$ 3.1 & 15.4 & 0.1226 \\
+B & All original + engineered & 290 & 16.4 $\pm$ 3.0 & 15.2 & 0.1219 \\
+C & Top-k original & 260 & 16.8 $\pm$ 3.1 & 15.4 & 0.1226 \\
+D & Top-k original + engineered & 280 & 16.4 $\pm$ 3.0 & \textbf{15.2} & \textbf{0.1219} \\
+E & Greedy original & 91 & 21.7 $\pm$ 1.4 & 19.8 & 0.1574 \\
+F & Greedy original + engineered & 96 & \textbf{16.2 $\pm$ 2.1} & 15.7 & 0.1261 \\
+\bottomrule
+\end{tabular}
+\caption{Feature ablation. CV = time-series 5-fold on the training set ($\pm$ fold SD); test = chronological test set. Bold = best.}
+\label{tab:ablation}
+\end{table}

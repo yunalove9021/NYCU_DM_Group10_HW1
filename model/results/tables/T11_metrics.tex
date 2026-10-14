@@ -1,0 +1,17 @@
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{lllll}
+\toprule
+Metric & Unit & Emphasises & Caution & Why we use it \\
+\midrule
+MAE & \$ & typical error size & weights all errors linearly & the user's cost: dollars a buyer or seller would misjudge; carries the decision threshold \\
+RMSE & log price & large (relative) errors & sensitive to outliers & the training objective and Kaggle metric; ≈ relative error \\
+MAPE & \% & relative error & unstable when y ≈ 0 & comparable across cheap and expensive houses (prices are never near 0) \\
+R² & none & variance explained & can be negative on test data & shows how much better than predicting the mean \\
+Within $\pm$10\% & \% of houses & share of usable estimates & ignores the size of misses & how often an estimate is close enough to act on \\
+\bottomrule
+\end{tabular}
+\caption{Evaluation metrics and the reason for each.}
+\label{tab:metrics}
+\end{table}

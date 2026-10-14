@@ -1,0 +1,17 @@
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{llrlrrr}
+\toprule
+Model & Hyperparameters & r threshold & Dummies & Features & CV RMSE $\pm$ SD & CV MAE (\$k) \\
+\midrule
+OLS & - & 0.3 & filtered & 54 & 0.1519 $\pm$ 0.0350 & 18.8 \\
+Ridge & alpha=145 & 0.3 & all & 263 & 0.1354 $\pm$ 0.0283 & 16.3 \\
+Lasso & alpha=0.00425 & 0.3 & all & 263 & 0.1345 $\pm$ 0.0306 & 16.4 \\
+ElasticNet & alpha=0.0774, l1\_ratio=0.05 & 0.3 & all & 263 & \textbf{0.1334 $\pm$ 0.0294} & \textbf{16.3} \\
+Huber & epsilon=2.0, alpha=1.45e+03 & 0.3 & all & 263 & 0.1344 $\pm$ 0.0270 & 16.1 \\
+\bottomrule
+\end{tabular}
+\caption{Best configuration per model family (time-series CV on the training set; lower is better).}
+\label{tab:best_family}
+\end{table}

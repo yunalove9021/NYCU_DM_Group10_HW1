@@ -1,0 +1,18 @@
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{lrrrrrr}
+\toprule
+Method & CV MAE (\$k) & CV RMSE & Test MAE (\$k) & Test RMSE & Test R² & Within $\pm$10\% (\%) \\
+\midrule
+Training mean & 56.8 $\pm$ 3.3 & 0.4014 $\pm$ 0.0287 & 55.2 & 0.4092 & -0.010 & 18.5 \\
+Persistence (last 3 months) & 57.3 $\pm$ 3.5 & 0.4083 $\pm$ 0.0288 & 54.8 & 0.4076 & -0.003 & 18.2 \\
+Single-feature OLS (OverallQual) & 31.7 $\pm$ 2.5 & 0.2293 $\pm$ 0.0166 & 29.4 & 0.2371 & 0.661 & 38.4 \\
+Single-feature OLS (log GrLivArea) & 37.6 $\pm$ 1.9 & 0.2682 $\pm$ 0.0132 & 41.0 & 0.3038 & 0.443 & 28.1 \\
+Gradient boosting (raw inputs) & 19.3 $\pm$ 3.3 & 0.1526 $\pm$ 0.0253 & \textbf{14.9} & 0.1308 & 0.897 & \textbf{70.5} \\
+Ours (ElasticNet + features) & \textbf{16.3 $\pm$ 2.8} & \textbf{0.1334 $\pm$ 0.0294} & 15.3 & \textbf{0.1229} & \textbf{0.909} & 68.8 \\
+\bottomrule
+\end{tabular}
+\caption{Main results. CV: mean $\pm$ SD over 5 TimeSeriesSplit folds; test: chronological test set (292 sales). Bold = best in each column. Decision threshold: MAE $\leq$ \$16.5k.}
+\label{tab:main_results}
+\end{table}
