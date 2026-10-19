@@ -182,29 +182,30 @@ def main():
         ax.hlines(i, r["ci_lo"], r["ci_hi"], color=col, lw=1.6)
         ax.scatter(r["beta"], i, s=40, zorder=3, color=col if sig[i] else SURFACE, edgecolor=col, lw=1.5)
     ax.axvline(0, color=INK, lw=1)
-    ax.set_yticks(range(len(show)), show["feature"], fontsize=8)
+    ax.locator_params(axis="x", nbins=5)
+    ax.set_yticks(range(len(show)), show["feature"], fontsize=14)
     x_hi, x_lo = max(show["ci_hi"].max(), show["beta"].max()), min(show["ci_lo"].min(), show["beta"].min())
     span = x_hi - x_lo
     ax.set_xlim(x_lo - 0.05 * span, x_hi + 0.32 * span)
     cp, cv = x_hi + 0.12 * span, x_hi + 0.25 * span
-    ax.text(cp, len(show) - 0.3, "p", ha="center", fontsize=8, fontweight="bold")
-    ax.text(cv, len(show) - 0.3, "VIF", ha="center", fontsize=8, fontweight="bold")
+    ax.text(cp, len(show) - 0.3, "p", ha="center", fontsize=14, fontweight="bold")
+    ax.text(cv, len(show) - 0.3, "VIF", ha="center", fontsize=14, fontweight="bold")
     for i, r in show.iterrows():
-        ax.text(cp, i, stars(r["p"]), ha="center", va="center", fontsize=8, color=MUTED if r["p"] >= 0.05 else INK)
-        vt = "ref" if r["is_reference"] else ("inf" if np.isinf(r["VIF"]) else f"{r['VIF']:.1f}")
-        ax.text(cv, i, vt, ha="center", va="center", fontsize=8, color=RED if hi_vif[i] else INK)
+        ax.text(cp, i, stars(r["p"]), ha="center", va="center", fontsize=14, color=MUTED if r["p"] >= 0.05 else INK)
+        vt = "ref" if r["is_reference"] else ("inf" if np.isinf(r["VIF"]) else ">1000" if r["VIF"] >= 1000 else f"{r['VIF']:.1f}")
+        ax.text(cv, i, vt, ha="center", va="center", fontsize=14, color=RED if hi_vif[i] else INK)
     rev = show[show["hypothesis_check"].str.startswith("reversal")]
     if len(rev):
         i = rev["beta"].abs().idxmax()
         r = show.loc[i]
         ax.annotate(f"marginal r = {r['marginal_r']:+.2f}, but beta = {r['beta']:+.3f}\nwhen the other features are held fixed",
-                    (r["beta"], i), xytext=(r["beta"] + 0.25 * span, i - 2.5 if i > 3 else i + 2.5), fontsize=8, color=RED,
+                    (r["beta"], i), xytext=(r["beta"] + 0.25 * span, i - 2.5 if i > 3 else i + 2.5), fontsize=14, color=RED,
                     arrowprops={"arrowstyle": "-", "color": RED, "lw": 1})
     ax.grid(axis="y", visible=False)
     ax.set(title=f"F6. Top 30 coefficients by |beta| ({key[0]}), 95% CI ({'HC3' if key[0] == 'OLS' else 'bootstrap'})",
            xlabel="standardised coefficient (change in log price per 1 SD), 95% CI")
     fig.text(0.01, 0.005, "filled = p < 0.05, hollow = n.s.; red = VIF >= 10 (collinear, interpret with care); ref = reference level dropped for VIF",
-             fontsize=8, color=MUTED)
+             fontsize=14, color=MUTED)
     save(fig, "F6_coefficients_forest.png")
 
     # ---------------- F7 residual diagnostics
@@ -220,7 +221,7 @@ def main():
     axes[2].scatter(osm, osr, s=10, color=BLUE, alpha=0.6, lw=0)
     axes[2].plot(osm, slope * osm + icpt, color=MUTED, lw=1)
     axes[2].set(title="Normal Q-Q of residuals", xlabel="theoretical quantile", ylabel="residual quantile")
-    fig.suptitle("F7. Residual diagnostics of the final model on the time-split test set", fontsize=11)
+    fig.suptitle("F7. Residual diagnostics of the final model on the time-split test set", fontsize=19)
     save(fig, "F7_residual_diagnostics.png")
     print(f"test RMSE {metrics['rmse']:.4f}, MAE ${metrics['mae']:,.0f}; {int((tab['p'] < 0.05).sum())} significant features")
 

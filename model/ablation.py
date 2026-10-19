@@ -97,7 +97,7 @@ def main():
 
     # ---------------- F8 overall + by age slice
     names = list(sets)
-    fig, axes = plt.subplots(1, 2, figsize=(15, 5), gridspec_kw={"width_ratios": [1, 1.5]})
+    fig, axes = plt.subplots(1, 2, figsize=(16, 5.8), gridspec_kw={"width_ratios": [1, 1.5]})
     t = tab.set_index("set")
     for i, k in enumerate(names):
         axes[0].bar(i, t.loc[k, "cv_mae_usd"], 0.65, yerr=t.loc[k, "cv_mae_usd_sd"], color=SET_COLORS[k],
@@ -105,8 +105,8 @@ def main():
         axes[0].scatter(i, t.loc[k, "test_mae_usd"], marker="D", s=40, color=SURFACE, edgecolor=INK, zorder=3,
                         label="test MAE" if i == 0 else None)
     nl = "\n"
-    ticks = [k + nl + SET_NAMES[k].replace(" + ", " +" + nl) + nl + f"({int(t.loc[k, 'n_feats'])} feats)" for k in names]
-    axes[0].set_xticks(range(len(names)), ticks, fontsize=7)
+    ticks = [k + nl + SET_NAMES[k].replace(" + ", " +" + nl).replace(" ", nl) + nl + f"({int(t.loc[k, 'n_feats'])} feats)" for k in names]
+    axes[0].set_xticks(range(len(names)), ticks, fontsize=12)
     axes[0].legend(frameon=False, loc="upper left")
     axes[0].set(title="(a) Time-series 5-fold CV MAE (bars, error bar = fold SD)", ylabel="MAE ($)")
     age_rows = sl[sl["slice"].str.startswith("Age")]
@@ -115,19 +115,19 @@ def main():
     for j, k in enumerate(names):
         axes[1].bar(xs + (j - 2.5) * w, age_rows[f"MAE_usd {k}"], w * 0.95, color=SET_COLORS[k], label=f"Set {k}")
     axes[1].set_xticks(xs, [f"{s.replace('Age: ', '')}\n(n={n})" for s, n in zip(age_rows["slice"], age_rows["n"])])
-    axes[1].legend(frameon=False, ncol=6, fontsize=8, loc="upper center", bbox_to_anchor=(0.5, -0.12))
+    axes[1].legend(frameon=False, ncol=6, fontsize=14, loc="upper center", bbox_to_anchor=(0.5, -0.2))
     axes[1].set(title="(b) Time-split test set, by house age at sale", ylabel="test MAE ($)")
-    fig.suptitle(f"F8. Feature ablation ({fam}; same split, folds and tuning; only the feature set changes)", fontsize=11)
+    fig.suptitle(f"F8. Feature ablation ({fam}; same split, folds and tuning; only the feature set changes)", fontsize=19)
     save(fig, "F8_ablation.png")
 
     # ---------------- F9 choosing k
     fig, ax = plt.subplots(figsize=(7.5, 4))
     for k, c in kcurves.items():
         ax.errorbar(c.index, c["cv_mae_usd"], yerr=c["cv_mae_usd_sd"], fmt="o-", ms=5, color=SET_COLORS[k], ecolor=SET_COLORS[k],
-                    alpha=0.9, label=f"Set {k}: {SET_NAMES[k]} (chosen k = {int(sets[k]['k'])})", capsize=0)
+                    alpha=0.9, label=f"Set {k} (chosen k = {int(sets[k]['k'])})", capsize=0)
         ax.axvline(sets[k]["k"], color=SET_COLORS[k], ls=":", lw=1.2)
     ax.set_xscale("log")
-    ax.legend(frameon=False, fontsize=8)
+    ax.legend(frameon=False, fontsize=14, loc="upper right")
     ax.set(title="F9. Top-k sets: CV MAE vs. k (ranking recomputed in every training fold)", xlabel="k (log scale)", ylabel="CV MAE ($)")
     save(fig, "F9_topk_curves.png")
 
@@ -144,7 +144,7 @@ def main():
     ax.set(title="F10. Pairwise test MAE difference (first set - second), 95% paired-bootstrap CI",
            xlabel="$ per house; > 0 = the second set is better")
     fig.text(0.01, 0.01, "red = Holm-adjusted p < 0.05 (filled: paired bootstrap; hollow red: Wilcoxon signed-rank only); dark = not significant",
-             fontsize=8, color=MUTED)
+             fontsize=14, color=MUTED)
     save(fig, "F10_ablation_pairwise.png")
 
 

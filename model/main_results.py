@@ -7,6 +7,7 @@ Baselines follow model/baseline2.py (trivial / simple / strong tiers), plus a pe
 Outputs: results/main_results.csv, results/baselines_strong.csv, results/main_summary.json,
          results/test_predictions_baselines.csv, figures F15 (pipeline) and F16 (main results).
 """
+import textwrap
 import warnings
 
 import matplotlib.pyplot as plt
@@ -157,14 +158,14 @@ def main():
                 "p_wilcoxon": float(stats.wilcoxon(e_r, e_o).pvalue)}, "main_summary.json")
 
     # ---------------- F16 main results
-    fig, ax = plt.subplots(figsize=(10, 4.8))
+    fig, ax = plt.subplots(figsize=(12, 5.5))
     xs = np.arange(len(main))
     cols = [GRAY, GRAY, "#8d99a6", "#8d99a6", NAVY, RED]
     ax.bar(xs, main["cv_mae"] / 1e3, 0.62, yerr=main["cv_mae_sd"] / 1e3, color=cols, error_kw={"ecolor": INK, "lw": 1, "capsize": 3})
     ax.scatter(xs, main["test_mae"] / 1e3, marker="D", s=45, color=SURFACE, edgecolor=INK, zorder=3, label="test MAE")
     ax.axhline(thr / 1e3, color=RED, ls="--", lw=1.2)
-    ax.text(len(main) - 0.5, thr / 1e3, f" decision threshold ${thr / 1e3:.1f}k", color=RED, va="bottom", ha="right", fontsize=8)
-    ax.set_xticks(xs, [m.replace(" (", "\n(") for m in main["method"]], fontsize=8)
+    ax.text(-0.4, thr / 1e3, f"decision threshold ${thr / 1e3:.1f}k", color=RED, va="bottom", ha="left", fontsize=14)
+    ax.set_xticks(xs, [textwrap.fill(m, 14) for m in main["method"]], fontsize=14)
     ax.legend(frameon=False, loc="upper right")
     ax.set(title="F16. Main results: CV MAE (bars, ± fold SD) and test MAE (diamonds)", ylabel="MAE ($k)")
     save(fig, "F16_main_results.png")
@@ -179,22 +180,22 @@ def main():
         ("Linear model", f"{cfg['family']}\n{cfg['params'].replace(', ', chr(10))}\nstandardised*"),
         ("Prediction &\nevaluation", "log price → $\nMAE, RMSE, MAPE, R²\nTS-CV + test"),
     ]
-    fig, ax = plt.subplots(figsize=(15, 3.6))
+    fig, ax = plt.subplots(figsize=(20, 4.8))
     ax.set_xlim(0, len(stages) * 2.5)
-    ax.set_ylim(0, 3.2)
+    ax.set_ylim(-0.3, 3.2)
     ax.axis("off")
     for i, (title, desc) in enumerate(stages):
         x = i * 2.5 + 0.15
         hi = i in (2, 4)
         ax.add_patch(FancyBboxPatch((x, 1.75), 2.1, 1.1, boxstyle="round,pad=0.02,rounding_size=0.12",
                                     fc=RED if hi else NAVY, ec="none"))
-        ax.text(x + 1.05, 2.3, title, ha="center", va="center", color="white", fontsize=10.5, fontweight="bold")
-        ax.text(x + 1.05, 1.5, desc, ha="center", va="top", color=INK, fontsize=8)
+        ax.text(x + 1.05, 2.3, title, ha="center", va="center", color="white", fontsize=22, fontweight="bold")
+        ax.text(x + 1.05, 1.5, desc, ha="center", va="top", color=INK, fontsize=16)
         if i < len(stages) - 1:
             ax.annotate("", xy=(x + 2.38, 2.3), xytext=(x + 2.12, 2.3), arrowprops={"arrowstyle": "-|>", "color": MUTED, "lw": 1.5})
-    ax.text(0.15, 0.05, "* decided on the training rows of each fold (or of the full training set for the final model) and applied unchanged "
-            "to validation / test rows", fontsize=8, color=MUTED)
-    ax.set_title("F15. Pipeline: from raw data to a prediction (red = feature engineering and the linear model)", fontsize=11)
+    ax.text(0.15, -0.25, "* decided on the training rows of each fold (or of the full training set for the final model) and applied unchanged "
+            "to validation / test rows", fontsize=17, color=MUTED)
+    ax.set_title("F15. Pipeline: from raw data to a prediction (red = feature engineering and the linear model)", fontsize=22)
     save(fig, "F15_pipeline.png")
     print(main[["method", "cv_mae", "cv_rmse", "test_mae", "test_r2"]].round(4).to_string())
     print(f"threshold ${thr:,.0f}; ours vs {rival}: test gap {np.mean(e_r - e_o):+,.0f}")

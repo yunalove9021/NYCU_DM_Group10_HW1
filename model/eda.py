@@ -49,21 +49,21 @@ def main():
     axes[1].hist(D["yte"], bins, density=True, histtype="step", lw=2, color=ORANGE, label=f"test ({len(D['yte'])})")
     axes[1].legend(frameon=False)
     axes[1].set(title=f"log1p(SalePrice), skew = {stats.skew(y):.2f}", xlabel="log price", ylabel="density")
-    fig.suptitle("E1. Target: the log transform removes the right skew; train and test have similar distributions", fontsize=11)
+    fig.suptitle("E1. Target: the log transform removes the right skew; train and test have similar distributions", fontsize=19)
     save(fig, "E1_target.png")
 
     # E2 top correlations
     top = corr.head(25)[::-1]
     col = {"original": BLUE, "engineered": RED, "dummy": GRAY}
-    fig, ax = plt.subplots(figsize=(8, 7))
+    fig, ax = plt.subplots(figsize=(8, 10))
     ax.barh(top["feature"], top["r"], color=[col[k] for k in top["kind"]])
     for t, lab in [(0.1, "small"), (0.3, "medium"), (0.5, "large")]:
         for s in (-1, 1):
             ax.axvline(s * t, color=MUTED, lw=0.8, ls=":")
-        ax.text(t, len(top) - 0.3, lab, fontsize=7, color=MUTED, ha="center")
+        ax.text(t, len(top) - 0.3, lab, fontsize=12, color=MUTED, ha="center")
     ax.axvline(0, color=INK, lw=1)
     from matplotlib.patches import Patch
-    ax.legend(handles=[Patch(color=c, label=k) for k, c in col.items()], frameon=False, loc="lower right")
+    ax.legend(handles=[Patch(color=c, label=k) for k, c in col.items()], frameon=False, loc="lower left")
     ax.set(title="E2. Top 25 features by |Pearson r| with log price (train)", xlabel="r (dotted: Cohen's 0.1 / 0.3 / 0.5)")
     save(fig, "E2_top_correlations.png")
 
@@ -77,7 +77,7 @@ def main():
         xs = np.linspace(x.min(), x.max(), 50)
         ax.plot(xs, np.polyval(b, xs), color=RED, lw=1.5)
         ax.set(title=f"{f} (r = {corr.set_index('feature').at[f, 'r']:+.2f})", xlabel=f"{f} (processed scale)", ylabel="log price")
-    fig.suptitle("E3. Strongest non-dummy features vs. log price (train), with linear fit", fontsize=11)
+    fig.suptitle("E3. Strongest non-dummy features vs. log price (train), with linear fit", fontsize=19)
     save(fig, "E3_top_scatter.png")
 
     # E4 collinearity among top 15 non-dummy features
@@ -85,11 +85,11 @@ def main():
     C = np.corrcoef(X[:, [D["col_index"][f] for f in top15]], rowvar=False)
     fig, ax = plt.subplots(figsize=(9, 7.5))
     im = ax.imshow(C, cmap=DIVERGING, vmin=-1, vmax=1)
-    ax.set_xticks(range(15), top15, rotation=45, ha="right", fontsize=8)
-    ax.set_yticks(range(15), top15, fontsize=8)
+    ax.set_xticks(range(15), top15, rotation=45, ha="right", fontsize=14)
+    ax.set_yticks(range(15), top15, fontsize=14)
     for i in range(15):
         for j in range(15):
-            ax.text(j, i, f"{C[i, j]:.2f}", ha="center", va="center", fontsize=6, color=INK)
+            ax.text(j, i, f"{C[i, j]:.2f}", ha="center", va="center", fontsize=11, color=INK)
     ax.grid(False)
     fig.colorbar(im, ax=ax, shrink=0.8)
     ax.set_title("E4. Correlation among the 15 strongest features (collinear blocks)")
@@ -111,7 +111,7 @@ def main():
     fig, ax = plt.subplots(figsize=(13, 4.5))
     ax.boxplot([np.log1p(rtr.loc[rtr["Neighborhood"] == n, "SalePrice"]) for n in order], labels=order, showfliers=False,
                medianprops={"color": RED}, boxprops={"color": BLUE}, whiskerprops={"color": MUTED}, capprops={"color": MUTED})
-    ax.tick_params(axis="x", labelrotation=60, labelsize=8)
+    ax.tick_params(axis="x", labelrotation=60, labelsize=14)
     ax.set(title="E6. Log price by neighbourhood (train), sorted by median", ylabel="log price")
     save(fig, "E6_neighbourhood.png")
     print(f"EDA: {int((corr['abs_r'] >= 0.5).sum())} features with |r| >= 0.5; {int((drift['SMD'].abs() > 0.1).sum())} drifted features")

@@ -4,6 +4,7 @@ Points whose residual (log scale, actual - predicted) lies outside +/- 2 SD of t
 input context, rule-based likely cause, and how the flagged houses differ from the rest.
 Outputs: results/error_points.csv, results/error_compare.csv, results/error_summary.json, figures F11-F12.
 """
+import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -137,11 +138,12 @@ def main():
         ax.scatter(fl[x], fl["resid_log"], s=80, facecolor="none", edgecolor=RED, lw=1.6, zorder=3)
         for _, r in fl.head(N_CASES).iterrows():
             ax.annotate(r["#"], (r[x], r["resid_log"]), xytext=(0, 8 if r["resid_log"] > 0 else -13), textcoords="offset points",
-                        ha="center", fontsize=7, color=RED, fontweight="bold")
+                        ha="center", fontsize=12, color=RED, fontweight="bold")
         ax.set(xlabel=xl, ylabel="residual y - y_hat (log price)")
-    axes[0].text(0.99, 0.02, f"dashed: +/-2 SD = +/-{2 * sd:.3f} (about -{-np.expm1(-2 * sd) * 100:.0f}% / +{np.expm1(2 * sd) * 100:.0f}% in price)",
-                 transform=axes[0].transAxes, ha="right", fontsize=8, color=MUTED)
-    fig.suptitle(f"F11. Test residuals; {len(fl)} of {len(df)} houses outside +/-2 SD (circled, numbered by |z|)", fontsize=11)
+    axes[0].xaxis.set_major_locator(mdates.MonthLocator(bymonth=(1, 4, 7, 10)))
+    axes[0].xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m"))
+    axes[0].set_title(f"dashed: +/-2 SD = +/-{2 * sd:.3f} (about -{-np.expm1(-2 * sd) * 100:.0f}% / +{np.expm1(2 * sd) * 100:.0f}% in price)", fontsize=14, color=MUTED)
+    fig.suptitle(f"F11. Test residuals; {len(fl)} of {len(df)} houses outside +/-2 SD (circled, numbered by |z|)", fontsize=19)
     save(fig, "F11_error_points.png")
 
     # ---------------- F12 how flagged houses differ
@@ -149,7 +151,7 @@ def main():
     xs = np.arange(len(sale_share))
     axes[0].bar(xs - 0.2, sale_share["all test"] * 100, 0.38, color=BLUE, label="all test houses")
     axes[0].bar(xs + 0.2, sale_share["flagged"] * 100, 0.38, color=ORANGE, label="flagged (|z| > 2)")
-    axes[0].set_xticks(xs, sale_share.index)
+    axes[0].set_xticks(xs, sale_share.index, rotation=30, ha="right")
     axes[0].legend(frameon=False)
     axes[0].set(title="Sale condition mix", ylabel="% of houses")
     c = cmp.sort_values("SMD")
@@ -158,7 +160,7 @@ def main():
     axes[1].axvline(0, color=INK, lw=1)
     axes[1].set_yticks(range(len(c)), c["feature"])
     axes[1].set(title="Flagged vs. other houses: standardised mean difference", xlabel="SMD (flagged - rest); shaded = negligible")
-    fig.suptitle("F12. What the flagged houses have in common", fontsize=11)
+    fig.suptitle("F12. What the flagged houses have in common", fontsize=19)
     save(fig, "F12_error_patterns.png")
     # ---------------- F13 feature scatter: where the flagged houses sit (train grey, test blue, flagged red with predicted -> actual)
     fig, axes = plt.subplots(2, 3, figsize=(15, 8.5))
@@ -172,12 +174,12 @@ def main():
         ax.scatter(top[f], np.log1p(top["Pred"]), s=34, facecolor=SURFACE, edgecolor=RED, lw=1.3, zorder=3, label="case: predicted")
         ax.scatter(top[f], np.log1p(top["Actual"]), s=34, color=RED, zorder=4, label="case: actual")
         for _, r in top.iterrows():
-            ax.annotate(r["#"], (r[f], np.log1p(r["Actual"])), xytext=(4, 2), textcoords="offset points", fontsize=8, color=RED, fontweight="bold")
+            ax.annotate(r["#"], (r[f], np.log1p(r["Actual"])), xytext=(4, 2), textcoords="offset points", fontsize=14, color=RED, fontweight="bold")
         if f == "LotArea":
             ax.set_xscale("log")
         ax.set(xlabel=f + (" (log scale)" if f == "LotArea" else ""), ylabel="log price")
-    axes[0, 0].legend(frameon=False, fontsize=7, loc="upper left")
-    fig.suptitle(f"F13. The {N_CASES} largest errors on key features: hollow = predicted, filled = actual, red line = error", fontsize=11)
+    axes[0, 0].legend(frameon=False, fontsize=12, loc="lower right")
+    fig.suptitle(f"F13. The {N_CASES} largest errors on key features: hollow = predicted, filled = actual, red line = error", fontsize=19)
     save(fig, "F13_error_feature_scatter.png")
 
     # ---------------- F14 percentile profile of each flagged house (relative to training houses)
@@ -186,9 +188,9 @@ def main():
     im = ax.imshow(M, cmap=PCT, vmin=0, vmax=100, aspect="auto")
     for i in range(M.shape[0]):
         for j in range(M.shape[1]):
-            ax.text(j, i, f"{M[i, j]:.0f}", ha="center", va="center", fontsize=7, color=INK)
-    ax.set_xticks(range(M.shape[1]), KEY + ["SalePrice"], rotation=30, ha="right", fontsize=8)
-    ax.set_yticks(range(len(M)), [f"{h} Id {i} ({sc})" for h, i, sc in zip(fl["#"], fl["Id"], fl["SaleCondition"])][:N_CASES], fontsize=8)
+            ax.text(j, i, f"{M[i, j]:.0f}", ha="center", va="center", fontsize=12, color=INK)
+    ax.set_xticks(range(M.shape[1]), KEY + ["SalePrice"], rotation=30, ha="right", fontsize=14)
+    ax.set_yticks(range(len(M)), [f"{h} Id {i} ({sc})" for h, i, sc in zip(fl["#"], fl["Id"], fl["SaleCondition"])][:N_CASES], fontsize=14)
     ax.grid(False)
     fig.colorbar(im, ax=ax, shrink=0.8, label="percentile among training houses")
     ax.set_title(f"F14. Percentile profile of the {N_CASES} largest errors (orange = low, blue = high vs. training houses)")

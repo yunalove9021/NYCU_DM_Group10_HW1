@@ -13,6 +13,7 @@ import json
 import warnings
 from pathlib import Path
 
+import textwrap
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -59,12 +60,12 @@ TIME_FEATURES = {"YrSold", "MoSold", "YearBuilt", "YearRemodAdd", "GarageYrBlt",
 
 COLORS = dict(zip(FAMILIES, ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4"]))
 BLUE, ORANGE, RED, NAVY = "#2a78d6", "#eb6834", "#e34948", "#33414f"
-GRAY, INK, MUTED, SURFACE = "#8a8984", "#0b0b0b", "#52514e", "#fcfcfb"
+GRAY, INK, MUTED, SURFACE = "#8a8984", "#0b0b0b", "#52514e", "#ffffff"
 plt.rcParams.update({
     "figure.facecolor": SURFACE, "axes.facecolor": SURFACE, "savefig.facecolor": SURFACE,
     "axes.edgecolor": MUTED, "axes.labelcolor": INK, "text.color": INK, "xtick.color": MUTED, "ytick.color": MUTED,
     "axes.spines.top": False, "axes.spines.right": False, "axes.grid": True, "grid.color": "#e8e7e3",
-    "grid.linewidth": 0.6, "axes.axisbelow": True, "lines.linewidth": 2, "font.size": 10, "axes.titlesize": 11,
+    "grid.linewidth": 0.6, "axes.axisbelow": True, "lines.linewidth": 2, "font.size": 17, "axes.titlesize": 18, "axes.labelsize": 17, "legend.fontsize": 14, "figure.titlesize": 19,
 })
 
 
@@ -387,10 +388,28 @@ def from_json_key(k):
 
 
 # ================================================================== output helpers
+def _wrap(t, inches):
+    """Wrap a title / label to the width it has (big fonts would otherwise run off the figure)."""
+    s = t.get_text()
+    n = max(20, int(inches * 72 / (t.get_fontsize() * 0.5)))   # ponytail: average glyph width estimate
+    if s and "\n" not in s and len(s) > n:
+        t.set_text(textwrap.fill(s, n))
+
+
 def save(fig, name):
     FIG.mkdir(parents=True, exist_ok=True)
+    W = fig.get_figwidth()
+    if fig._suptitle is not None:
+        _wrap(fig._suptitle, W)
+    for ax in fig.axes:
+        w = ax.get_position().width * W
+        for t in (ax.title, ax.xaxis.label):
+            _wrap(t, w)
+        _wrap(ax.yaxis.label, ax.get_position().height * fig.get_figheight())
     fig.tight_layout()
-    fig.savefig(FIG / name, dpi=150)
+    fig.savefig(FIG / name, dpi=150, bbox_inches="tight", pad_inches=0.15)
+    (FIG.parent / "figures_transparent").mkdir(exist_ok=True)
+    fig.savefig(FIG.parent / "figures_transparent" / name, dpi=150, bbox_inches="tight", pad_inches=0.15, transparent=True)
     plt.close(fig)
     return f"figures/{name}"
 
