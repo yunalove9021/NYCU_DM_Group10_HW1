@@ -79,7 +79,7 @@
 ├── log/              # 特徵欄位異常修正相關紀錄
 ├── mapping/          # 資料欄位與原始標籤對應參考（含 column_types.json、categories_mapping.json、skewed_features.json 等）
 ├── summary/          # 數值資料分佈結果參考（標準化前後分別為獨立檔案）
-├── models/           # 簡單線性回歸結果，包含貪婪特徵選擇列表。
+├── greedy_selection/           # 簡單線性回歸結果，包含貪婪特徵選擇列表。
 └── process_dataset/  # 處理後的資料產出位置（區分類別資料 one_hot 表達與 index 表達，其餘欄位內容相同）
 ```
 
