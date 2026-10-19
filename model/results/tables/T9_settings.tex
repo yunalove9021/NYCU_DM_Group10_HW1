@@ -1,0 +1,24 @@
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{lll}
+\toprule
+Setting & Values searched & Source \\
+\midrule
+Correlation threshold & 0, 0.1, 0.3, 0.5 & Cohen (1988) \\
+One-hot dummies & none, filtered, all & — \\
+Drop GrLivArea > 4000 (train folds) & False, True & De Cock (2011) \\
+Lasso / ElasticNet $\alpha$ & 100 values, $\alpha$\_max $\rightarrow$ 0.0001·$\alpha$\_max (log) & Friedman et al. (2010) \\
+ElasticNet l1\_ratio & 0.01, 0.05, 0.1, 0.5, 0.7, 0.9, 0.95, 0.99 & Zou \& Hastie (2005) \\
+Ridge $\alpha$ & 30 values, df 1 $\rightarrow$ 0.95·rank (4.58 … 3.12e+05) & Hastie et al. (2009) §3.4.1 \\
+Huber $\epsilon$ & 1.345, 2 & Huber (1981) \\
+Huber $\alpha$ & 8 values from the ridge range & — \\
+Grid spacing & logarithmic & Bergstra \& Bengio (2012) \\
+Cross-validation & TimeSeriesSplit, 5 folds & Bergmeir \& Benítez (2012) \\
+Top-k (ablation) & 5, 10, 15, 20, 30, 40, 60, 80, 120, 160, 200, 240, 260, 280 & — \\
+Bootstrap resamples & B = 1000 & Efron \& Tibshirani (1993) \\
+\bottomrule
+\end{tabular}
+\caption{Tunable settings, the values searched and their sources.}
+\label{tab:settings}
+\end{table}

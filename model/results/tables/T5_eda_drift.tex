@@ -1,0 +1,20 @@
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{lrr}
+\toprule
+Feature & SMD (test $-$ train) & KS p \\
+\midrule
+YrSold & +2.67 & <0.001 \\
+cos\_MoSold & +0.30 & <0.001 \\
+MiscVal & +0.18 & 0.816 \\
+HouseAge & +0.15 & 0.004 \\
+HeatingQC & -0.14 & 0.077 \\
+RemodAge & +0.14 & 0.014 \\
+GarageAge & +0.14 & 0.009 \\
+BsmtFullBath & +0.13 & 0.154 \\
+\bottomrule
+\end{tabular}
+\caption{Largest train $\rightarrow$ test shifts among non-dummy features (standardised mean difference; Kolmogorov-Smirnov p).}
+\label{tab:eda_drift}
+\end{table}

@@ -1,0 +1,5 @@
+~$*
+model/results/*.csv
+model/results/*.json
+model/*.csv
+model/figures/

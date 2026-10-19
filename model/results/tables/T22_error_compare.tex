@@ -1,0 +1,19 @@
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{lrrr}
+\toprule
+Feature & Flagged mean & Other test houses & SMD \\
+\midrule
+GrLivArea & 1,407.7 & 1,485.1 & \textbf{-0.16} \\
+TotalBsmtSF & 1,086.4 & 1,047.1 & +0.08 \\
+LotArea & 10,771.4 & 9,936.2 & \textbf{+0.18} \\
+OverallQual & 5.6 & 6.0 & \textbf{-0.30} \\
+OverallCond & 5.2 & 5.6 & \textbf{-0.33} \\
+YearBuilt & 1,955.7 & 1,970.3 & \textbf{-0.47} \\
+SalePrice (\$) & 143,593.9 & 177,239.9 & \textbf{-0.31} \\
+\bottomrule
+\end{tabular}
+\caption{Flagged vs. other test houses (raw units; $|$SMD$|$ > 0.1 = a real difference).}
+\label{tab:error_compare}
+\end{table}

@@ -1,0 +1,22 @@
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{lrrl}
+\toprule
+Categorical & df & GVIF\^{}(1/(2df)) & Reference level \\
+\midrule
+BldgType & 2 & \textbf{3.54} & BldgType\_1Fam \\
+HouseStyle & 7 & 3.09 & HouseStyle\_1Story \\
+MSSubClass & 13 & 2.52 & MSSubClass\_20 \\
+Exterior1st & 12 & 2.40 & Exterior1st\_VinylSd \\
+Exterior2nd & 14 & 2.17 & Exterior2nd\_VinylSd \\
+SaleCondition & 5 & 1.69 & SaleCondition\_Normal \\
+MSZoning & 4 & 1.69 & MSZoning\_RL \\
+CentralAir & 1 & 1.65 & CentralAir\_Y \\
+RoofStyle & 4 & 1.56 & RoofStyle\_Gable \\
+Foundation & 5 & 1.55 & Foundation\_PConc \\
+\bottomrule
+\end{tabular}
+\caption{Generalised VIF of categorical variables (values above 3.16 correspond to VIF > 10).}
+\label{tab:gvif}
+\end{table}

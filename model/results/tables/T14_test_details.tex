@@ -1,0 +1,20 @@
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{lrl}
+\toprule
+Metric & Value & 95\% CI / test \\
+\midrule
+RMSE (log price) & 0.1229 & [0.1089, 0.1384] \\
+MAE (\$) & 15,309 & [13,529, 17,334] \\
+Median absolute error (\$) & 11,259 & — \\
+MAPE (\%) & 9.3 & — \\
+R² (log price) & 0.909 & — \\
+Mean residual (bias) & -0.0077 & t-test p = 0.287 \\
+Breusch-Pagan & — & p = 0.003 \\
+Durbin-Watson & 1.89 & — \\
+\bottomrule
+\end{tabular}
+\caption{Final model (ElasticNet, 262 features, 100 non-zero) on the chronological test set; CIs from 1000 bootstrap resamples.}
+\label{tab:test_details}
+\end{table}

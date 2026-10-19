@@ -1,0 +1,17 @@
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{llll}
+\toprule
+Group & Features & Why it should help & Hypothesis \\
+\midrule
+Transforms & log1p of skewed numerics (skew > 0.75, decided per fit); sin/cos of MoSold & makes area–price relations linear in logs; month becomes cyclic so Dec and Jan are neighbours & H1 \\
+Interactions & Qual\_x\_Area, TotalQualCond & lets the quality effect grow with size (luxury premium); one combined condition score & H2, H5 \\
+Aggregates & TotalArea, TotalBaths, TotalPorchArea & buyers value total usable space; one strong feature replaces several correlated parts & H1, H7 \\
+Domain-derived & HouseAge, RemodAge, GarageAge; AvgRoomSize, LotUtilization & age at sale is what a buyer sees, not the calendar year; room size and lot use measure spaciousness & H1, H3 \\
+Presence flags & HasBasement, HasFireplace, HasPool, HasGarage, IsRemod & capture the price step of having an amenity, separate from its size & H6 \\
+\bottomrule
+\end{tabular}
+\caption{Engineered feature groups, the rationale for each and the hypothesis it addresses (§4).}
+\label{tab:feature_groups}
+\end{table}

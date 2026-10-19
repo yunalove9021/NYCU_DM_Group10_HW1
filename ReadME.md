@@ -82,3 +82,63 @@
 ├── models/           # 簡單線性回歸結果，包含貪婪特徵選擇列表。
 └── process_dataset/  # 處理後的資料產出位置（區分類別資料 one_hot 表達與 index 表達，其餘欄位內容相同）
 ```
+
+---
+
+## 模型訓練與分析流程 (`model/`)
+
+以前處理後的資料（`process_dataset/`）為輸入，完成線性回歸模型的調參、測試集評估、係數顯著性、特徵消融（ablation）與錯誤分析。
+
+### 1.環境需求
+Python 3.10 以上，安裝所需套件：
+
+```bash
+pip install numpy pandas scipy scikit-learn statsmodels matplotlib joblib openpyxl
+```
+
+### 2.執行方式
+於專案根目錄執行，一次跑完所有步驟：
+
+```bash
+python model/run_all.py
+```
+
+`run_all.py` 會依序執行下列腳本，後面的步驟會讀取前面步驟的輸出：
+
+| 順序 | 腳本 | 內容 |
+| :--- | :--- | :--- |
+| 1 | `eda.py` | 探索性特徵分析（僅用 train）：目標分佈、相關係數、共線性、train → test 漂移 |
+| 2 | `tune.py` | 以 5-fold **TimeSeriesSplit** 調整相關係數門檻（0 / 0.1 / 0.3 / 0.5）、one-hot 處理、離群值規則與模型超參數（OLS / Ridge / Lasso / ElasticNet / Huber） |
+| 3 | `final_model.py` | 以最佳設定重新訓練，於時間切割的 test set 評估一次；bootstrap 信賴區間、p-value、VIF / GVIF |
+| 4 | `ablation.py` | 特徵消融 Set A–F（原始 / 加入工程特徵 × 全選 / top-k / greedy），含顯著性檢定 |
+| 5 | `error_analysis.py` | 分析 test set 中殘差超出 ±2 SD 的房屋（相似房屋比較 + 規則判斷原因） |
+| 6 | `main_results.py` | Baselines（平均值、persistence、單特徵 OLS、gradient boosting）、決策門檻與主要結果 |
+| 7 | `report.py` | 產生 `report.md`與 LaTeX 表格 |
+
+
+**前處理更新後**：若重新執行 `data_preprocess.py` 或更新 `models/greedy_select_feature.xlsx`，需重新執行 `python model/run_all.py`。
+
+### 3.查看結果
+所有輸出都在 `model/results/`：
+
+| 檔案 | 說明 |
+| :--- | :--- |
+| `report.md` | 完整報告（含完整係數表、評估標準與限制） |
+| `tables/` | ACL 格式 LaTeX 表格（booktabs），檔名即表格編號，如 `T13_main_results.tex` |
+| `figures/` | 圖片：`E1`–`E6` 為 EDA，`F1`–`F16` 為模型與分析 |
+
+**表格與圖片編號**：`report.md`、`report_summary.md`、`report_outline.docx` 與 `tables/*.tex` 使用相同的編號（T1–T22、S1；E1–E6、F1–F16）。
+
+### 4.`model/` 資料夾架構
+
+```text
+model/
+├── common.py           # 共用：資料載入、特徵分組、模型、時間序列 CV
+├── eda.py / tune.py / final_model.py / ablation.py / error_analysis.py / main_results.py
+├── report.py           # 產生 Markdown 報告與 LaTeX 表格
+├── run_all.py          # 一次執行全部步驟
+└── results/
+    ├── report.md
+    ├── tables/         # T1–T22、S1（.tex）
+    └── figures/        # E1–E6、F1–F16（.png）
+```

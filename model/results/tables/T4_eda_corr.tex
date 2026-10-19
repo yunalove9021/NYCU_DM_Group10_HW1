@@ -1,0 +1,24 @@
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{llrl}
+\toprule
+Feature & Type & r & Effect size (Cohen) \\
+\midrule
+Qual\_x\_Area & engineered & +0.848 & large \\
+OverallQual & original & +0.818 & large \\
+TotalArea & engineered & +0.806 & large \\
+GrLivArea & original & +0.746 & large \\
+GarageCars & original & +0.682 & large \\
+TotalBaths & engineered & +0.668 & large \\
+ExterQual & original & +0.664 & large \\
+KitchenQual & original & +0.659 & large \\
+GarageArea & original & +0.651 & large \\
+TotalQualCond & engineered & +0.647 & large \\
+BsmtQual & original & +0.617 & large \\
+1stFlrSF & original & +0.604 & large \\
+\bottomrule
+\end{tabular}
+\caption{Twelve features most correlated with log price on the training set (Pearson r; Cohen's bands 0.1 / 0.3 / 0.5).}
+\label{tab:eda_corr}
+\end{table}

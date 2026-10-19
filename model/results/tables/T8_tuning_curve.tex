@@ -1,0 +1,23 @@
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{lrr}
+\toprule
+$\alpha$ & CV MAE (\$k) & CV RMSE \\
+\midrule
+0.000673 & 20.1 & 0.1643 \\
+0.00206 & 19.4 & 0.1570 \\
+0.00628 & 18.2 & 0.1474 \\
+0.0192 & 17.0 & 0.1388 \\
+0.0586 & 16.3 & 0.1337 \\
+\textbf{0.0774} & \textbf{16.3} & \textbf{0.1334} \\
+0.179 & 16.9 & 0.1372 \\
+0.546 & 19.8 & 0.1545 \\
+1.67 & 29.9 & 0.2153 \\
+5.09 & 53.5 & 0.3774 \\
+6.73 & 56.7 & 0.4011 \\
+\bottomrule
+\end{tabular}
+\caption{Tuning curve of ElasticNet (l1\_ratio = 0.05, threshold 0.3): time-series CV error along the $\alpha$ path. Bold = selected $\alpha$.}
+\label{tab:tuning_curve}
+\end{table}

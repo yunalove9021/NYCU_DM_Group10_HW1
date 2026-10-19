@@ -1,0 +1,17 @@
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{llll}
+\toprule
+Tier & Baseline & Inputs & Tuning \\
+\midrule
+Trivial & Training mean & none & — \\
+Trivial & Persistence (last 3 months) & median price of the last 3 months of the training part & — \\
+Simple & Single-feature OLS (OverallQual) & OverallQual (strongest original feature, E2) & — \\
+Simple & Single-feature OLS (log GrLivArea) & log living area (most intuitive size feature) & — \\
+Strong & Gradient boosting (raw inputs) & all raw columns (one-hot coded) & best of 12 random-forest / gradient-boosting settings by the same CV (lr: 0.03, leaves: 8, l2: 0.0) \\
+\bottomrule
+\end{tabular}
+\caption{Baselines of increasing strength.}
+\label{tab:baselines}
+\end{table}
